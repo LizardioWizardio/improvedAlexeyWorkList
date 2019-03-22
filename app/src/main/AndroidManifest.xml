@@ -10,7 +10,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:screenOrientation="landscape"
             android:name=".MainActivity">
 
             <intent-filter>
@@ -20,7 +19,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".Plan"
-            android:screenOrientation="landscape"
             android:label="Создание нового дела"
             android:parentActivityName=".MainActivity">
             ></activity>
