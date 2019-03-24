@@ -33,10 +33,6 @@ public class Plan extends AppCompatActivity {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-
-
-
                 if(Caption.getText() == null || StatusGroup.getCheckedRadioButtonId() == -1 || ImportantGroup.getCheckedRadioButtonId() == -1)
                 {
                     Toast.makeText(getApplicationContext(), "Заполните обязательные поля", Toast.LENGTH_LONG).show();
@@ -51,6 +47,8 @@ public class Plan extends AppCompatActivity {
                     RadioButton ImportantRb = (RadioButton)ImportantGroup.getChildAt(ImportantGroup.indexOfChild(ImportantView));
                     String ImportantState = ImportantRb.getText().toString();
 
+                    Note.notes.add(new Note(Caption.getText().toString(), StatusState,
+                            Description.getText().toString(), Date.getText().toString(), ImportantState));
                     startActivity(new Intent(Plan.this, MainActivity.class));
                 }
             }
