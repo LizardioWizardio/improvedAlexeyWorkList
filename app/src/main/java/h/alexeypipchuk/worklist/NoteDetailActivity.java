@@ -4,25 +4,24 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
 
-public class NoteDetail extends AppCompatActivity {
+public class NoteDetailActivity extends AppCompatActivity {
     public static final String EXTRA_NOTE_NO = "noteNo";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_note_detail);
-
-        int noteNo = (Integer)getIntent().getExtras().get(EXTRA_NOTE_NO);
+        Bundle bundle = this.getIntent().getExtras();
 
         TextView caption = (TextView)findViewById(R.id.captionD);
-        caption.setText(Note.notes.get(noteNo).getmCaption());
+        caption.setText(bundle.getString("caption"));
         TextView date = (TextView)findViewById(R.id.dateD);
-        date.setText(Note.notes.get(noteNo).getmDate());
+        date.setText(bundle.getString("date"));
         TextView importance = (TextView)findViewById(R.id.importanceD);
-        importance.setText(Note.notes.get(noteNo).getmImportance());
+        importance.setText(bundle.getString("importance"));
         TextView status = (TextView)findViewById(R.id.statusD);
-        status.setText(Note.notes.get(noteNo).getmStatus());
+        status.setText(bundle.getString("status"));
         TextView description = (TextView)findViewById(R.id.descriptionD);
-        description.setText(Note.notes.get(noteNo).getmDescription());
+        description.setText(bundle.getString("description"));
     }
 }

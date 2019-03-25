@@ -10,7 +10,11 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
-public class Plan extends AppCompatActivity {
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+public class NewNoteActivity extends AppCompatActivity {
 
     EditText Caption;
     EditText Date;
@@ -33,12 +37,10 @@ public class Plan extends AppCompatActivity {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(Caption.getText() == null || StatusGroup.getCheckedRadioButtonId() == -1 || ImportantGroup.getCheckedRadioButtonId() == -1)
-                {
+                if(Caption.getText() == null || StatusGroup.getCheckedRadioButtonId() == -1 || ImportantGroup.getCheckedRadioButtonId() == -1) {
                     Toast.makeText(getApplicationContext(), "Заполните обязательные поля", Toast.LENGTH_LONG).show();
                 }
-                else
-                {
+                else {
                     View StatusView = StatusGroup.findViewById(StatusGroup.getCheckedRadioButtonId());
                     RadioButton SattusRb = (RadioButton)StatusGroup.getChildAt(StatusGroup.indexOfChild(StatusView));
                     String StatusState = SattusRb.getText().toString();
@@ -47,11 +49,28 @@ public class Plan extends AppCompatActivity {
                     RadioButton ImportantRb = (RadioButton)ImportantGroup.getChildAt(ImportantGroup.indexOfChild(ImportantView));
                     String ImportantState = ImportantRb.getText().toString();
 
-                    Note.notes.add(new Note(Caption.getText().toString(), StatusState,
-                            Description.getText().toString(), Date.getText().toString(), ImportantState));
-                    startActivity(new Intent(Plan.this, MainActivity.class));
+                    MyAdapter.SendToViewModel(Caption.getText().toString(), StatusState,
+                            Description.getText().toString(), Date.getText().toString(), ImportantState);
                 }
             }
         });
+    }
+
+    //////////////////////////////////////////////// наблюдатель
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(ObserverNewNote event) {
+        startActivity(new Intent(NewNoteActivity.this, MainActivity.class));
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
     }
 }

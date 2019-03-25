@@ -8,41 +8,47 @@ import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 public class MainActivity extends AppCompatActivity {
-    RecyclerView recyclerView;
-    MyAdapter myAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        String[] caption = new String[Note.notes.size()];
-        for (int i = 0; i < caption.length; i++) caption[i] = Note.notes.get(i).getmCaption();
-        String[] date = new String[Note.notes.size()];
-        for (int i = 0; i < date.length; i++) date[i] = Note.notes.get(i).getmDate();
-        String[] importantce = new String[Note.notes.size()];
-        for (int i = 0; i < importantce.length; i++) importantce[i] = Note.notes.get(i).getmImportance();
-        String[] status = new String[Note.notes.size()];
-        for (int i = 0; i < status.length; i++) status[i] = Note.notes.get(i).getmStatus();
-        String[] description = new String[Note.notes.size()];
-        for (int i = 0; i < description.length; i++) description[i] = Note.notes.get(i).getmDescription();
-
-        myAdapter = new MyAdapter(caption, date, importantce, status, description);
-
-        recyclerView = findViewById(R.id.recycler_main);
+        RecyclerView recyclerView = findViewById(R.id.recycler_main);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(myAdapter);
-
-        myAdapter.setListener(new MyAdapter.Listener() {
-            public void onClick(int position) {
-                Intent intent = new Intent(MainActivity.this, NoteDetail.class);
-                intent.putExtra(NoteDetail.EXTRA_NOTE_NO, position);
-                startActivity(intent);
-            }
-        });
+        recyclerView.setAdapter(new MyAdapter());
     }
 
+    //////////////////////////////////////////////// наблюдатель
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(ObserverItemNote event) {
+        Intent intent = new Intent(MainActivity.this, NoteDetailActivity.class);
+        intent.putExtra(NoteDetailActivity.EXTRA_NOTE_NO, event.position);
+        intent.putExtra("caption", event.caption);
+        intent.putExtra("date", event.date);
+        intent.putExtra("description", event.description);
+        intent.putExtra("importance", event.importance);
+        intent.putExtra("status", event.status);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
+    ////////////////////////////////////////////// меню
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu, menu);
@@ -53,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_new_plan:
-                Intent intent = new Intent(this, Plan.class);
+                Intent intent = new Intent(this, NewNoteActivity.class);
                 startActivity(intent);
                 return true;
             default:
