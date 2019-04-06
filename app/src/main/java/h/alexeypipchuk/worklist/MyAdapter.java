@@ -1,5 +1,6 @@
 package h.alexeypipchuk.worklist;
 
+import android.content.Intent;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -8,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 
 class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
@@ -32,6 +35,7 @@ class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
         mImportances = new String[Note.notes.size()];
         for (int i = 0; i < mImportances.length; i++) mImportances[i] = Note.notes.get(i).getmDescription();
 
+        EventBus.getDefault().register(this);
         setListener(new Listener() {
             @Override
             public void onClick(int position) {
@@ -42,9 +46,11 @@ class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
         });
     }
 
-    static void SendToViewModel(String caption, String status, String description, String date, String importance){
-            Note.notes.add(new Note(caption, status, description, date, importance));
-            EventBus.getDefault().post(new ObserverNewNote());
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(ObserverSaveNewNote event) {
+        Note.notes.add(new Note(event.caption, event.status, event.description,
+                event.date, event.importance));
+        EventBus.getDefault().post(new ObserverNewNote());
     }
 
     public interface Listener {

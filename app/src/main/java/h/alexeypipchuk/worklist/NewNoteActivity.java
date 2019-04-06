@@ -49,8 +49,9 @@ public class NewNoteActivity extends AppCompatActivity {
                     RadioButton ImportantRb = (RadioButton)ImportantGroup.getChildAt(ImportantGroup.indexOfChild(ImportantView));
                     String ImportantState = ImportantRb.getText().toString();
 
-                    MyAdapter.SendToViewModel(Caption.getText().toString(), StatusState,
-                            Description.getText().toString(), Date.getText().toString(), ImportantState);
+
+                    EventBus.getDefault().post(new ObserverSaveNewNote(Caption.getText().toString(), StatusState,
+                            Description.getText().toString(), Date.getText().toString(), ImportantState));
                 }
             }
         });
