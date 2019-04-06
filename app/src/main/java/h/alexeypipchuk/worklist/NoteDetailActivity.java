@@ -13,6 +13,8 @@ public class NoteDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_note_detail);
         Bundle bundle = this.getIntent().getExtras();
 
+        // активность для подробного рассмотрения карточки
+
         TextView caption = (TextView)findViewById(R.id.captionD);
         caption.setText(bundle.getString("caption"));
         TextView date = (TextView)findViewById(R.id.dateD);

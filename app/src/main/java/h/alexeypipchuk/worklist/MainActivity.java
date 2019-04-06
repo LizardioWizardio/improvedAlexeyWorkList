@@ -21,10 +21,10 @@ public class MainActivity extends AppCompatActivity {
 
         RecyclerView recyclerView = findViewById(R.id.recycler_main);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(new MyAdapter());
+        recyclerView.setAdapter(new MyAdapter()); //адаптер и modelview в одном
     }
 
-    //////////////////////////////////////////////// наблюдатель
+    //////////////// передача данных конкретного дела в активити
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(ObserverItemNote event) {
         Intent intent = new Intent(MainActivity.this, NoteDetailActivity.class);
@@ -36,6 +36,8 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra("status", event.status);
         startActivity(intent);
     }
+
+    // подписка/отписка от наблюдателей адаптера
 
     @Override
     public void onStart() {

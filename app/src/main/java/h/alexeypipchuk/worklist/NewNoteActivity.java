@@ -28,6 +28,7 @@ public class NewNoteActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_plan);
 
+        // собираем все введенные данные
         Caption = (EditText) findViewById(R.id.caption);
         Date = (EditText) findViewById(R.id.date);
         Description = (EditText) findViewById(R.id.description);
@@ -37,6 +38,7 @@ public class NewNoteActivity extends AppCompatActivity {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // простенькая валидация обязательных полей
                 if(Caption.getText() == null || StatusGroup.getCheckedRadioButtonId() == -1 || ImportantGroup.getCheckedRadioButtonId() == -1) {
                     Toast.makeText(getApplicationContext(), "Заполните обязательные поля", Toast.LENGTH_LONG).show();
                 }
@@ -49,6 +51,7 @@ public class NewNoteActivity extends AppCompatActivity {
                     RadioButton ImportantRb = (RadioButton)ImportantGroup.getChildAt(ImportantGroup.indexOfChild(ImportantView));
                     String ImportantState = ImportantRb.getText().toString();
 
+                    // собрали данные и отправляем их наблюдателю, у которого адаптер позже заберет их и создаст новый объект модели
 
                     EventBus.getDefault().post(new ObserverSaveNewNote(Caption.getText().toString(), StatusState,
                             Description.getText().toString(), Date.getText().toString(), ImportantState));
@@ -57,12 +60,14 @@ public class NewNoteActivity extends AppCompatActivity {
         });
     }
 
-    //////////////////////////////////////////////// наблюдатель
+    ///////////////// этот наблюдатель ждет разрешения адаптера на переход обратно на главну активность
+    // после успешного создания нового объекта модели
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(ObserverNewNote event) {
         startActivity(new Intent(NewNoteActivity.this, MainActivity.class));
     }
 
+    // подписка/отписка
     @Override
     public void onStart() {
         super.onStart();

@@ -21,9 +21,10 @@ class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
     private String[] mDates;
     private String[] mImportances;
 
-    private Listener mListener;
+    private Listener mListener; // слушатель нажатия на конкретную карточку
 
     MyAdapter() {
+        // подгружаем данные из модели
         mCaptions = new String[Note.notes.size()];
         for (int i = 0; i < mCaptions.length; i++) mCaptions[i] = Note.notes.get(i).getmCaption();
         mStatuses = new String[Note.notes.size()];
@@ -35,7 +36,9 @@ class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
         mImportances = new String[Note.notes.size()];
         for (int i = 0; i < mImportances.length; i++) mImportances[i] = Note.notes.get(i).getmDescription();
 
+        // подписываемся на наблюдателя за новыми карточками(создание нового дела)
         EventBus.getDefault().register(this);
+        // устанавливаем слушатель, передающий в активити через наблюдателя подробные данные о карточке
         setListener(new Listener() {
             @Override
             public void onClick(int position) {
@@ -46,12 +49,16 @@ class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
         });
     }
 
+    // создаем новую записиь модели, взяв данные из наблюдателя за активити создания нового дела
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(ObserverSaveNewNote event) {
         Note.notes.add(new Note(event.caption, event.status, event.description,
                 event.date, event.importance));
+        // после создания, разрешаем перейти на главную активити
         EventBus.getDefault().post(new ObserverNewNote());
     }
+
+    // работа с ресайкл вью
 
     public interface Listener {
         void onClick(int position);

@@ -2,6 +2,8 @@ package h.alexeypipchuk.worklist;
 
 public class ObserverItemNote {
 
+    // наблюдатель, через который проходят данные для отображения детального обзора конкретной карточки
+
     int position;
     String caption;
     String importance;

@@ -2,6 +2,7 @@ package h.alexeypipchuk.worklist;
 
 public class ObserverSaveNewNote {
 
+    // наблюдатель, через который проходят данные для создания новой карточки
     String caption;
     String importance;
     String status;

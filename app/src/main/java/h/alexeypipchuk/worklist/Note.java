@@ -3,6 +3,8 @@ package h.alexeypipchuk.worklist;
 import java.util.ArrayList;
 
 public class Note {
+
+    // просто моделька со сеттерами и геттерами
     private String mCaption;
     private String mStatus;
     private String mDescription;
