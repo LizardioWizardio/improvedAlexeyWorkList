@@ -27,13 +27,14 @@ public class MainActivity extends AppCompatActivity {
     //////////////// передача данных конкретного дела в активити
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(ObserverItemNote event) {
-        Intent intent = new Intent(MainActivity.this, NoteDetailActivity.class);
-        intent.putExtra(NoteDetailActivity.EXTRA_NOTE_NO, event.position);
+        Intent intent = new Intent(MainActivity.this, NewNoteActivity.class);
         intent.putExtra("caption", event.caption);
         intent.putExtra("date", event.date);
         intent.putExtra("description", event.description);
         intent.putExtra("importance", event.importance);
         intent.putExtra("status", event.status);
+        intent.putExtra("isEdit", true);
+        intent.putExtra("position", event.position);
         startActivity(intent);
     }
 

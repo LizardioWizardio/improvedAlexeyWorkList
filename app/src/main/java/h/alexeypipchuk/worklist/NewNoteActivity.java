@@ -9,10 +9,11 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class NewNoteActivity extends AppCompatActivity {
 
@@ -22,11 +23,17 @@ public class NewNoteActivity extends AppCompatActivity {
     RadioGroup StatusGroup;
     RadioGroup ImportantGroup;
     FloatingActionButton btn;
+    boolean isEdit = false;
+    int position = 0;
+    Pattern datePattern = Pattern.compile("^(0?[1-9]|1[0-2])[-](0?[1-9]|[12]\\d|3[01])[-](19|20)\\d{2}$");
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_plan);
+
+        Bundle bundle = this.getIntent().getExtras();
 
         // собираем все введенные данные
         Caption = (EditText) findViewById(R.id.caption);
@@ -34,11 +41,24 @@ public class NewNoteActivity extends AppCompatActivity {
         Description = (EditText) findViewById(R.id.description);
         StatusGroup = (RadioGroup) findViewById(R.id.StatusGroup);
         ImportantGroup = (RadioGroup) findViewById(R.id.ImportantGroup);
+        if (bundle != null) {
+            Caption.setText(bundle.getString("caption"));
+            Date.setText(bundle.getString("date"));
+            Description.setText(bundle.getString("description"));
+            isEdit = true;
+            position = bundle.getInt("position");
+        }
+
         btn = (FloatingActionButton) findViewById(R.id.floatingActionButton);
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)  {
                 // простенькая валидация обязательных полей
+                Matcher dateMatcher = datePattern.matcher(Date.getText());
+                if(!dateMatcher.find()) {
+                    Toast.makeText(getApplicationContext(), "Введите дату в формате дд-мм-гггг", Toast.LENGTH_LONG).show();
+                    return;
+                }
                 if(Caption.getText() == null || StatusGroup.getCheckedRadioButtonId() == -1 || ImportantGroup.getCheckedRadioButtonId() == -1) {
                     Toast.makeText(getApplicationContext(), "Заполните обязательные поля", Toast.LENGTH_LONG).show();
                 }
@@ -53,8 +73,8 @@ public class NewNoteActivity extends AppCompatActivity {
 
                     // собрали данные и отправляем их наблюдателю, у которого адаптер позже заберет их и создаст новый объект модели
 
-                    EventBus.getDefault().post(new ObserverSaveNewNote(Caption.getText().toString(), StatusState,
-                            Description.getText().toString(), Date.getText().toString(), ImportantState));
+                    EventBus.getDefault().post(new ObserverSaveEditNewNote(Caption.getText().toString(), StatusState,
+                            Description.getText().toString(), Date.getText().toString(), ImportantState, isEdit, position));
                 }
             }
         });

@@ -1,6 +1,5 @@
 package h.alexeypipchuk.worklist;
 
-import android.content.Intent;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -51,9 +50,14 @@ class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
 
     // создаем новую записиь модели, взяв данные из наблюдателя за активити создания нового дела
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessageEvent(ObserverSaveNewNote event) {
-        Note.notes.add(new Note(event.caption, event.status, event.description,
+    public void onMessageEvent(ObserverSaveEditNewNote event) {
+        if (!event.isEdit) { // if we creating a task
+            Note.notes.add(new Note(event.caption, event.status, event.description,
                 event.date, event.importance));
+        } else { //if we editing a task
+            Note.notes.set(event.position, new Note(event.caption, event.status, event.description,
+                    event.date, event.importance));
+        }
         // после создания, разрешаем перейти на главную активити
         EventBus.getDefault().post(new ObserverNewNote());
     }
